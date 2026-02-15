@@ -10,7 +10,7 @@ import { Toaster } from "react-hot-toast"
 const App = () => {
   return (
     <>
-    <Toaster position="top-right" reverseOrder={false} />
+    <Toaster position="center-bottom" reverseOrder={false} />
     <div className='flex h-screen overflow-hidden'>
 
       <Sidebar />

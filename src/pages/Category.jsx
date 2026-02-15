@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 import toast from "react-hot-toast";
+import ConfirmModal from "../components/ConfirmModal";
 
 const Category = () => {
 
@@ -9,10 +10,6 @@ const Category = () => {
   const [search, setSearch] = useState("");
 
   const [showModal, setShowModal] = useState(false);
-  const [newCategory, setNewCategory] = useState({
-    name: "",
-    image: null,
-  });
   const [adding, setAdding] = useState(false);
 
   const [image, setImage] = useState(null);
@@ -22,6 +19,13 @@ const Category = () => {
   
   const [isEditing, setIsEditing] = useState(false)
   const [editingCategory, setEditingCategory] = useState(null)
+
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    category: null,
+  })
+
+  const [deleting, setDeleting] = useState(false)
 
   const fetchCategories = async () => {
       try {
@@ -123,6 +127,27 @@ const Category = () => {
     setPreview(null);
   }
 
+  const handleDeleteCategory = async () => {
+    try {
+      setDeleting(true);
+      await api.delete(`/api/categories/${deleteModal.category._id}`);
+      toast.success("Category deleted Successfully");
+
+      setDeleteModal({
+        open: false,
+        category: null
+      });
+      await fetchCategories();
+
+
+    } catch (error) {
+      cobsole.error(error);
+      toast.error("Failed to delete Category");
+    } finally {
+      setDeleting(false);
+    }
+  } 
+
   return (
     <div className="mx-6 mt-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -184,7 +209,10 @@ const Category = () => {
                         alt=""
                       />
                     </div>
-                    <div className="p-2 hover:bg-[#FFD8D8] flex items-center rounded-full cursor-pointer">
+                    <div onClick={() => setDeleteModal({
+                      open: true,
+                      category: cat,
+                    })} className="p-2 hover:bg-[#FFD8D8] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
                         src="/icons/delete.svg"
@@ -262,6 +290,20 @@ const Category = () => {
 
   </div>
 )}
+
+<ConfirmModal
+open={deleteModal.open}
+  title="Delete This Category"
+  message={`Are you sure you want to delete "${deleteModal.category?.name}"?`}
+  loading={deleting}
+  onConfirm={handleDeleteCategory}
+  onCancel={() =>
+    setDeleteModal({
+      open: false,
+      category: null,
+    })
+  }
+/>
 
     </div>
     
