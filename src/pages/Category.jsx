@@ -30,7 +30,7 @@ const Category = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-[16px] font-medium">Category Management</h1>
         <button className="flex items-center gap-2 bg-[#6F6859] px-6.5 py-3.25 rounded-md text-[16px] text-white cursor-pointer hover:bg-[#5e5646]">
-          <img src="/src/assets/icons/add.svg" alt="" />
+          <img src="/icons/add.svg" alt="" />
           Add Category
         </button>
       </div>
@@ -78,21 +78,21 @@ const Category = () => {
                     <div className="p-2 hover:bg-[#D6F6D6] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
-                        src="/src/assets/icons/view.svg"
+                        src="/icons/view.svg"
                         alt=""
                       />
                     </div>
                     <div className="p-2 hover:bg-[#D7D7FC] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
-                        src="/src/assets/icons/edit.svg"
+                        src="/icons/edit.svg"
                         alt=""
                       />
                     </div>
                     <div className="p-2 hover:bg-[#FFD8D8] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
-                        src="/src/assets/icons/delete.svg"
+                        src="/icons/delete.svg"
                         alt=""
                       />
                     </div>
