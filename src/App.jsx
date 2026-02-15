@@ -4,9 +4,13 @@ import Topbar from './components/Topbar'
 import { Route, Routes } from 'react-router-dom'
 import Product from './pages/Product'
 import Category from './pages/Category'
+import { Toaster } from "react-hot-toast"
+
 
 const App = () => {
   return (
+    <>
+    <Toaster position="top-right" reverseOrder={false} />
     <div className='flex h-screen overflow-hidden'>
 
       <Sidebar />
@@ -25,6 +29,8 @@ const App = () => {
       </div>
 
     </div>
+    </>
+    
   )
 }
 
