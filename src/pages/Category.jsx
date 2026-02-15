@@ -75,13 +75,7 @@ const Category = () => {
                 <div>{(cat.count).toString().padStart(2, "0")}</div>
                 <div>
                   <div className="flex gap-2 items-center">
-                    <div className="p-2 hover:bg-[#D6F6D6] flex items-center rounded-full cursor-pointer">
-                      <img
-                        className="h-5 w-5"
-                        src="/icons/view.svg"
-                        alt=""
-                      />
-                    </div>
+                    
                     <div className="p-2 hover:bg-[#D7D7FC] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
