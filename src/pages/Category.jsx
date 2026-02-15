@@ -19,6 +19,9 @@ const Category = () => {
   const [preview, setPreview] = useState(null);
 
   const [name, setName] = useState("")
+  
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingCategory, setEditingCategory] = useState(null)
 
   const fetchCategories = async () => {
       try {
@@ -53,28 +56,46 @@ const Category = () => {
       toast.error("Category name is required")
       return;
     }
-    if(!image) {
-      toast.error("Category Image is required");
-      return;
-    }
+   
+    
     try {
       setAdding(true);
 
       const formData = new FormData();
 
       formData.append("name", name);
-      formData.append("image", image);
 
+      if(image) {
+        formData.append("image", image);
+      }
+      
+
+      if(isEditing) {
+      await api.put(`/api/categories/${editingCategory._id}`, formData);
+      toast.success("Category Updated Succesfully");
+      setShowModal(false)
+    }
+
+    else{
+        if (!image) {
+        toast.error("Category image is required");
+        setAdding(false);
+        return;
+       }
       await api.post("/api/categories", formData);
 
       toast.success("Category added Succesfully");
 
       await fetchCategories();
+      resetModal();
 
       setName("");
       setImage(null);
       setPreview(null);
       setShowModal(false);
+    }
+
+      
     } catch (error) {
       console.error(error)
       toast.error("failed to add category")
@@ -83,12 +104,33 @@ const Category = () => {
       
     }
   }
+  
+  const handleEditClick = (category) => {
+    setIsEditing(true);
+    setEditingCategory(category);
+    setName(category.name);
+    setPreview(category.image);
+    setImage(null);
+    setShowModal(true);
+  }
+
+  const resetModal = () => {
+    setShowModal(false);
+    setIsEditing(false);
+    setEditingCategory(null);
+    setName("");
+    setImage(null);
+    setPreview(null);
+  }
 
   return (
     <div className="mx-6 mt-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-[16px] font-medium">Category Management</h1>
-        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-[#6F6859] px-6.5 py-3.25 rounded-md text-[16px] text-white cursor-pointer hover:bg-[#5e5646]">
+        <button onClick={() => {
+          resetModal();
+          setShowModal(true);
+        }} className="flex items-center gap-2 bg-[#6F6859] px-6.5 py-3.25 rounded-md text-[16px] text-white cursor-pointer hover:bg-[#5e5646]">
           <img src="/icons/add.svg" alt="" />
           Add Category
         </button>
@@ -135,7 +177,7 @@ const Category = () => {
                 <div>
                   <div className="flex gap-2 items-center">
                     
-                    <div className="p-2 hover:bg-[#D7D7FC] flex items-center rounded-full cursor-pointer">
+                    <div onClick={() => handleEditClick(cat)} className="p-2 hover:bg-[#D7D7FC] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
                         src="/icons/edit.svg"
@@ -162,7 +204,8 @@ const Category = () => {
 
     <div onClick={(e) => e.stopPropagation()} className=" w-[548px] bg-white p-6 flex flex-col rounded-lg">
         <div className="flex items-center justify-between">
-          <h2 className="text-[16px] font-medium">Add Category</h2>
+          
+          <h2 className="text-[16px] font-medium">{isEditing ? "Edit Category" : "Add Category"}</h2>
           <button onClick={handleSaveCategory} className="flex items-center gap-2 px-[26px] py-[13px] rounded-md bg-[#6F6859] text-white hover:bg-[#5e5646] cursor-pointer">
             <img className="w-[22px] h-[22px]" src="/icons/save.svg" alt="save" />
             {adding ? "Saving..." : "Save"}
