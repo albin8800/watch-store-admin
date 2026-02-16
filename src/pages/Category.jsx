@@ -6,6 +6,8 @@ import ConfirmModal from "../components/ConfirmModal";
 const Category = () => {
 
   const [categories, setCategories] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
@@ -27,10 +29,14 @@ const Category = () => {
 
   const [deleting, setDeleting] = useState(false)
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (page = 1) => {
       try {
-        const res = await api.get("/api/categories");
-        setCategories(res.data);
+        setLoading(true);
+        const res = await api.get(`/api/categories?page=${page}$limit=10`);
+        setCategories(res.data.categories);
+        setTotalPages(res.data.totalPages);
+        setCurrentPage(res.data.currentPage);
+
       } catch (error) {
         console.error(error);
       } finally {
@@ -148,6 +154,39 @@ const Category = () => {
     }
   } 
 
+
+  const getPagination = () => {
+    const pages = [];
+
+    if(totalPages <= 7) {
+      return Array.from({ length: totalPages}, (_, i) => i + 1);
+    }
+    if(currentPage <= 4) {
+      return [1, 2, 3, 4, 5, "...", totalPages]
+    }
+
+    if(currentPage >= totalPages - 3) {
+      return [
+        1,
+        "...",
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
+    }
+    return [
+      1,
+      "...",
+      currentPage -1,
+      currentPage,
+      currentPage + 1,
+      "...",
+      totalPages,
+    ]
+  } 
+
   return (
     <div className="mx-6 mt-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -225,6 +264,36 @@ const Category = () => {
             ))}
             
           </div>
+        </div>
+        <div className="flex items-center justify-center gap-1 md:gap-4 md:mt-10 mt:8">
+          <button onClick={() => setCurrentPage((prev) => Math.max(prev -1, 1))}
+          disabled={currentPage === 1}
+          className="flex px-[21px] py-[13px] hover:bg-[#F0ECE4] rounded-md items-center justify-center disabled:opacity-50">
+            <img className="w-[22px] h-[22px]" src="/icons/arrow-left.svg" alt="" />
+          </button>
+
+          {getPagination().map((page, index) =>
+          page === "..." ? (
+            <span key={index} className="px-[21px] py-[13px]">
+              ...
+            </span>
+          ) : (
+            <button key={index}
+            onClick={() => setCurrentPage(page)}
+            className={`px-[21px] py-[13px] rounded-md ${
+              currentPage === page ? "bg-[#F0ECE4] text-[#6F6859] text-[16px]" : "hover:bg-[#F0ECE4] text-[#827C6F] text-[16px]"
+            }`}
+            >
+              {page}
+            </button>
+          )
+          )}
+
+          <button onClick={() => setCurrentPage((prev) => Math.max(prev -1, 1))}
+          disabled={currentPage === 1}
+          className="flex px-[21px] py-[13px] hover:bg-[#F0ECE4] rounded-md items-center justify-center disabled:opacity-50">
+            <img className="w-[22px] h-[22px]" src="/icons/arrow-right.svg" alt="" />
+          </button>
         </div>
       </div>
       {showModal && (
