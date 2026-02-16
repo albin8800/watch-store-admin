@@ -32,7 +32,7 @@ const Category = () => {
   const fetchCategories = async (page = 1) => {
       try {
         setLoading(true);
-        const res = await api.get(`/api/categories?page=${page}$limit=10`);
+        const res = await api.get(`/api/categories?page=${page}&limit=10`);
         setCategories(res.data.categories);
         setTotalPages(res.data.totalPages);
         setCurrentPage(res.data.currentPage);
@@ -45,8 +45,8 @@ const Category = () => {
     }
 
   useEffect(() => {
-    fetchCategories();
-  }, [])
+    fetchCategories(currentPage);
+  }, [currentPage])
 
   const filteredCategories = categories.filter((cat) => 
     cat.name.toLowerCase().includes(search.toLowerCase())
