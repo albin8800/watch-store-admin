@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom'
 import Product from './pages/Product'
 import Category from './pages/Category'
 import { Toaster } from "react-hot-toast"
+import ProductForm from './pages/ProductForm'
 
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
           <Routes>
             <Route path='/category' element={<Category />} />
             <Route path='/product' element={<Product />} />
+            <Route path='/product/add' element={<ProductForm />} />
           </Routes>
         </div>
 
