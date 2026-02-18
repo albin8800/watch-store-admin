@@ -1,9 +1,72 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../api/axios';
+import toast from 'react-hot-toast';
 
 const Product = () => {
 
   const navigate = useNavigate();
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(10)
+
+  useEffect(() => {
+    fetchProducts();
+  }, [currentPage]);
+
+  
+  const fetchProducts = async (page = 1) => {
+    try {
+      setLoading(true);
+
+      const res = await api.get(`/api/products?page=${page}&limit=${limit}`)
+      setProducts(res.data.products);
+      setTotalPages(res.data.totalPages || 1)
+      setCurrentPage(res.data.currentPage)
+      setLimit(res.data.limit)
+
+    } catch (error) {
+      toast.error("Failed to fetch products")
+      console.error(error)
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const getPagination = () => {
+    const pages = [];
+
+    if(totalPages <= 7) {
+      return Array.from({ length: totalPages}, (_, i) => i + 1);
+    }
+    if(currentPage <= 4) {
+      return [1, 2, 3, 4, 5, "...", totalPages]
+    }
+
+    if(currentPage >= totalPages - 3) {
+      return [
+        1,
+        "...",
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
+    }
+    return [
+      1,
+      "...",
+      currentPage -1,
+      currentPage,
+      currentPage + 1,
+      "...",
+      totalPages,
+    ]
+  } 
 
   return (
     <div className="mx-6 mt-6 flex flex-col gap-6">
@@ -45,15 +108,18 @@ const Product = () => {
 
           <div>
 
-           
-              {/* <div className="flex items-center justify-center text-center">Loading Categories...</div> */}
-            
-              <div className="w-full grid grid grid-cols-[80px_3fr_1.5fr_1.5fr_120px] items-center border-b border-[#999999] py-4">
-                <div>01</div>
+           {loading ? (
+              <div className="flex items-center justify-center text-center">Loading Products...</div>
+           ) : (
 
-                <div className='truncate pr-24'>Hammer Unisex Smart Watch Long Battery Mens unisex watch</div>
-                <div>Smart Watches</div>
-                <div>05</div>
+            products.map((product, index) => (
+
+                <div key={product._id} className="w-full grid grid grid-cols-[80px_3fr_1.5fr_1.5fr_120px] items-center border-b border-[#999999] py-4">
+                <div>{(index + 1).toString().padStart(2, "0")}</div>
+
+                <div className='truncate pr-24'>{product.name}</div>
+                <div>{product.categoryId?.name || "--"}</div>
+                <div>{(product.stock).toString().padStart(2, "0")}</div>
                 <div>
                   <div className="flex gap-2 items-center">
                     
@@ -81,8 +147,46 @@ const Product = () => {
                   </div>
                 </div>
               </div>
+
+            ))
+           )
+           
+          }
+              
+            
+              
               </div>
               </div>
+              <div className="flex items-center justify-center gap-1 md:gap-4 md:mt-10 mt:8">
+          <button onClick={() => setCurrentPage((prev) => Math.max(prev -1, 1))}
+          disabled={currentPage === 1}
+          className="flex px-[21px] py-[13px] hover:bg-[#F0ECE4] rounded-md items-center justify-center disabled:opacity-50">
+            <img className="w-[22px] h-[22px]" src="/icons/arrow-left.svg" alt="" />
+          </button>
+
+          {getPagination().map((page, index) =>
+          page === "..." ? (
+            <span key={index} className="px-[21px] py-[13px]">
+              ...
+            </span>
+          ) : (
+            <button key={index}
+            onClick={() => setCurrentPage(page)}
+            className={`px-[21px] py-[13px] rounded-md ${
+              currentPage === page ? "bg-[#F0ECE4] text-[#6F6859] text-[16px]" : "hover:bg-[#F0ECE4] text-[#827C6F] text-[16px]"
+            }`}
+            >
+              {page}
+            </button>
+          )
+          )}
+
+          <button onClick={() => setCurrentPage((prev) => Math.max(prev -1, 1))}
+          disabled={currentPage === 1}
+          className="flex px-[21px] py-[13px] hover:bg-[#F0ECE4] rounded-md items-center justify-center disabled:opacity-50">
+            <img className="w-[22px] h-[22px]" src="/icons/arrow-right.svg" alt="" />
+          </button>
+        </div>
               </div>
               </div>
               
