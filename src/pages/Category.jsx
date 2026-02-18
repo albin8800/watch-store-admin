@@ -188,7 +188,7 @@ const Category = () => {
   } 
 
   return (
-    <div className="mx-6 mt-6 flex flex-col gap-6">
+    <div className=" mt-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-[16px] font-medium">Category Management</h1>
         <button onClick={() => {

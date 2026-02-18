@@ -74,7 +74,7 @@ const Product = () => {
   } 
 
   return (
-    <div className="mx-6 mt-6 flex flex-col gap-6">
+    <div className=" mt-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-[16px] font-medium">Product Management</h1>
         <button onClick={() => navigate("/product/add")} className="flex items-center gap-2 bg-[#6F6859] px-6.5 py-3.25 rounded-md text-[16px] text-white cursor-pointer hover:bg-[#5e5646]">
