@@ -26,6 +26,8 @@ const ProductForm = () => {
 
         const [loading, setLoading] = useState(false);
 
+        
+
         useEffect(() => {
             fetchCategories();
         }, []);

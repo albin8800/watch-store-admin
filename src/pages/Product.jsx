@@ -9,6 +9,7 @@ const Product = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10)
@@ -35,6 +36,10 @@ const Product = () => {
       setLoading(false);
     }
   }
+
+    const filteredProducts = products.filter((product) => 
+    product.name.toLowerCase().includes(search.toLowerCase())
+    );
 
   const getPagination = () => {
     const pages = [];
@@ -80,6 +85,8 @@ const Product = () => {
 
       <div className="flex flex-col p-6 bg-white rounded-lg ">
         <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           type="text"
           placeholder="Serch for Products..."
           className="border border-[#999999] py-[13px] px-[26px] outline-none text-[#000000] rounded-md"
@@ -112,7 +119,7 @@ const Product = () => {
               <div className="flex items-center justify-center text-center">Loading Products...</div>
            ) : (
 
-            products.map((product, index) => (
+            filteredProducts.map((product, index) => (
 
                 <div key={product._id} className="w-full grid grid grid-cols-[80px_3fr_1.5fr_1.5fr_120px] items-center border-b border-[#999999] py-4">
                 <div>{(index + 1).toString().padStart(2, "0")}</div>
