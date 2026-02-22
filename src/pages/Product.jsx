@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../components/ConfirmModal';
 
 const Product = () => {
 
@@ -13,6 +14,13 @@ const Product = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10)
+
+  const [deleteModal, setDeleteModal] = useState({
+      open: false,
+      category: null,
+    })
+  
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     fetchProducts();
@@ -34,6 +42,23 @@ const Product = () => {
       console.error(error)
     } finally {
       setLoading(false);
+    }
+  }
+
+  const handleDeleteProduct = async () => {
+    try {
+      setDeleting(true);
+      await api.delete(`/api/products/${deleteModal.product._id}`);
+      toast.success("Product deleted Succesfully");
+      setDeleteModal({
+        open: false,
+        product: null,
+      });
+      fetchProducts();
+    } catch (error) {
+      toast.error("Failed to delete Product");
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -72,6 +97,8 @@ const Product = () => {
       totalPages,
     ]
   } 
+
+  
 
   return (
     <div className=" mt-6 flex flex-col gap-6">
@@ -137,14 +164,17 @@ const Product = () => {
                         alt=""
                       />
                     </div>
-                    <div  className="p-2 hover:bg-[#D7D7FC] flex items-center rounded-full cursor-pointer">
+                    <div onClick={() => navigate(`/product/edit/${product._id}`)} className="p-2 hover:bg-[#D7D7FC] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
                         src="/icons/edit.svg"
                         alt=""
                       />
                     </div>
-                    <div  className="p-2 hover:bg-[#FFD8D8] flex items-center rounded-full cursor-pointer">
+                    <div onClick={() => setDeleteModal({
+                      open: true,
+                      product,
+                    })} className="p-2 hover:bg-[#FFD8D8] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
                         src="/icons/delete.svg"
@@ -195,6 +225,20 @@ const Product = () => {
           </button>
         </div>
               </div>
+
+              <ConfirmModal
+open={deleteModal.open}
+  title="Delete This Product"
+  message={`Are you sure you want to delete "${deleteModal.product?.name}"?`}
+  loading={deleting}
+  onConfirm={handleDeleteProduct}
+  onCancel={() =>
+    setDeleteModal({
+      open: false,
+      product: null,
+    })
+  }
+/>
               </div>
               
               

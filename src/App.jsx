@@ -25,6 +25,7 @@ const App = () => {
             <Route path='/category' element={<Category />} />
             <Route path='/product' element={<Product />} />
             <Route path='/product/add' element={<ProductForm />} />
+            <Route path='/product/edit/:id' element={<ProductForm />} />
           </Routes>
         </div>
 

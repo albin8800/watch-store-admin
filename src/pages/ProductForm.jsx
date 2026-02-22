@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 
 const ProductForm = () => {
 
     const navigate = useNavigate();
+    const { id } = useParams();
+
+    const isEditMode = Boolean(id);
 
     const [categories, setCategories] = useState([]);
 
@@ -42,6 +45,32 @@ const ProductForm = () => {
             }
         }
 
+        const fetchProduct = async () => {
+            const res = await api.get(`/api/products/${id}`);
+
+            const product = res.data.product;
+
+            setForm({
+              name: product.name,
+              brand: product.brand,
+              categoryId: product.categoryId._id,
+              price: product.price,
+              mrp: product.mrp,
+              stock: product.stock,
+              description: product.description,
+              isPopular: product.isPopular,
+              isWidest: product.isWidest,
+            });
+
+            setPreview(product.image);
+        }
+
+        useEffect(() => {
+            if(isEditMode) {
+                fetchProduct();
+            }
+        }, [id])
+
         const handleChange = (e) => {
             const { name, value, type, checked } = e.target;
 
@@ -63,10 +92,7 @@ const ProductForm = () => {
         const handleSubmit = async (e) => {
             e.preventDefault();
 
-            if(!image) {
-                toast.error("Please upload product Image");
-                return;
-            }
+            
 
             try {
                 setLoading(true);
@@ -82,10 +108,23 @@ const ProductForm = () => {
                 data.append("description", form.description);
                 data.append("isPopular", form.isPopular ? "true" : "false");
                 data.append("isWidest", form.isWidest ? "true" : "false");
-                data.append("image", image);
+                
+                if(image) {
+                    data.append("image", image);
+                }
+                if(isEditMode) {
+                    await api.put(`/api/products/${id}`, data);
+                    toast.success("Product Updated Succesfully");
+                } else {
+                    if(!image) {
+                        toast.error("Image required");
+                        return;
+                    }
 
                 await api.post("/api/products", data);
                 toast.success("Product added Succesfully");
+                }
+
                 navigate("/product")
             } catch (error) {
                 console.error(error)
@@ -108,7 +147,7 @@ const ProductForm = () => {
             </button>
             <button onClick={handleSubmit} disabled={loading} className='flex items-center px-[26px] py-[13px] gap-2 text-[16px] text-white bg-[#6F6859] rounded-md cursor-pointer'>
                 <img className='h-[22px] w-[22px]' src="/icons/save.svg" alt="" />
-                {loading ? "Saving..." : "Save"}
+                {loading ? "Saving..." :isEditMode ? "Update" : "Save"}
             </button>
         </div>
       </div>

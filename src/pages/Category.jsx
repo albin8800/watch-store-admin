@@ -147,7 +147,7 @@ const Category = () => {
 
 
     } catch (error) {
-      cobsole.error(error);
+      console.error(error);
       toast.error("Failed to delete Category");
     } finally {
       setDeleting(false);
