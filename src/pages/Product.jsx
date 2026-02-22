@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../components/ConfirmModal';
+import ProductModal from '../components/ProductModal';
 
 const Product = () => {
 
@@ -21,6 +22,8 @@ const Product = () => {
     })
   
   const [deleting, setDeleting] = useState(false)
+
+  const [viewId, setViewId] = useState(null);
 
   useEffect(() => {
     fetchProducts();
@@ -157,7 +160,7 @@ const Product = () => {
                 <div>
                   <div className="flex gap-2 items-center">
                     
-                    <div  className="p-2 hover:bg-[#D6F6D6] flex items-center rounded-full cursor-pointer">
+                    <div onClick={() => setViewId(product._id)} className="p-2 hover:bg-[#D6F6D6] flex items-center rounded-full cursor-pointer">
                       <img
                         className="h-5 w-5"
                         src="/icons/view.svg"
@@ -227,18 +230,26 @@ const Product = () => {
               </div>
 
               <ConfirmModal
-open={deleteModal.open}
-  title="Delete This Product"
-  message={`Are you sure you want to delete "${deleteModal.product?.name}"?`}
-  loading={deleting}
-  onConfirm={handleDeleteProduct}
-  onCancel={() =>
-    setDeleteModal({
-      open: false,
-      product: null,
-    })
-  }
-/>
+              open={deleteModal.open}
+                title="Delete This Product"
+                message={`Are you sure you want to delete "${deleteModal.product?.name}"?`}
+                loading={deleting}
+                onConfirm={handleDeleteProduct}
+                onCancel={() =>
+                  setDeleteModal({
+                    open: false,
+                    product: null,
+                  })
+                }
+              />
+              {
+                viewId && (
+                  <ProductModal 
+                  productId={viewId}
+                  onClose={() => setViewId(null)}
+                  />
+                )
+              }
               </div>
               
               
